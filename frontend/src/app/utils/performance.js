@@ -1,10 +1,12 @@
 export function measurePerformance() {
   if (typeof window === 'undefined') return null;
   
-  const navigation = window.performance.timing;
-  const pageLoadTime = navigation.domContentLoadedEventEnd - navigation.navigationStart;
+  const navEntry = performance.getEntriesByType('navigation')[0];
+  if (!navEntry) return null;
   
-  return pageLoadTime;
+  const pageLoadTime = navEntry.domContentLoadedEventEnd - navEntry.startTime;
+  
+  return Math.floor(pageLoadTime);
 }
 
 export function measureQueryExecution(callback) {
@@ -20,7 +22,7 @@ export function measureQueryExecution(callback) {
   );
   
   const measurements = performance.getEntriesByName('query-execution');
-  const executionTime = measurements[0].duration.toFixed(2);
+  const executionTime = measurements[0]?.duration.toFixed(2) || 0;
   
   performance.clearMarks('query-execution-start');
   performance.clearMarks('query-execution-end');
@@ -35,17 +37,32 @@ export function measureQueryExecution(callback) {
 export function collectPerformanceMetrics() {
   if (typeof window === 'undefined') return {};
   
-  const navigation = window.performance.timing;
+  const navEntry = performance.getEntriesByType('navigation')[0];
+  
+  if (!navEntry) return {};
+  
   const metrics = {
-    totalLoadTime: navigation.loadEventEnd - navigation.navigationStart,
-    domContentLoaded: navigation.domContentLoadedEventEnd - navigation.navigationStart,
-    firstPaint: navigation.responseEnd - navigation.navigationStart,
-    dnsLookup: navigation.domainLookupEnd - navigation.domainLookupStart,
-    tcpConnection: navigation.connectEnd - navigation.connectStart,
-    serverResponse: navigation.responseStart - navigation.requestStart,
-    contentDownload: navigation.responseEnd - navigation.responseStart,
-    domProcessing: navigation.domComplete - navigation.domLoading,
+    totalLoadTime: navEntry.loadEventEnd - navEntry.startTime,
+    domContentLoaded: navEntry.domContentLoadedEventEnd - navEntry.startTime,
+    firstPaint: navEntry.responseEnd - navEntry.startTime,
+    dnsLookup: navEntry.domainLookupEnd - navEntry.domainLookupStart,
+    tcpConnection: navEntry.connectEnd - navEntry.connectStart,
+    serverResponse: navEntry.responseStart - navEntry.requestStart,
+    contentDownload: navEntry.responseEnd - navEntry.responseStart,
+    domProcessing: navEntry.domComplete - navEntry.domLoading,
   };
+  
+  const paintMetrics = performance.getEntriesByType('paint');
+  const firstPaint = paintMetrics.find(entry => entry.name === 'first-paint');
+  const firstContentfulPaint = paintMetrics.find(entry => entry.name === 'first-contentful-paint');
+  
+  if (firstPaint) {
+    metrics.firstPaint = firstPaint.startTime;
+  }
+  
+  if (firstContentfulPaint) {
+    metrics.firstContentfulPaint = firstContentfulPaint.startTime;
+  }
   
   return metrics;
 }
