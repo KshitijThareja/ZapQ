@@ -20,7 +20,7 @@
     <a href="#tech-stack">Tech Stack</a> •
     <a href="#performance">Performance</a> •
     <a href="#optimizations">Optimizations</a> •
-    <a href="#installation">Installation</a> •
+    <a href="#installation">Installation</a>
   </p>
 </div>
 
