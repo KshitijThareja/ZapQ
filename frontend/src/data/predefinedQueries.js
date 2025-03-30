@@ -11,7 +11,6 @@ export const customerData = [
     country: 'Germany',
     phone: '030-0074321',
     fax: '030-0076545',
-    // Added metrics for visualization
     totalOrders: 6,
     totalSpend: 3746.70,
     averageOrderValue: 624.45,
@@ -32,7 +31,6 @@ export const customerData = [
     country: 'Mexico',
     phone: '(5) 555-4729',
     fax: '(5) 555-3745',
-    // Added metrics
     totalOrders: 4,
     totalSpend: 1488.80,
     averageOrderValue: 372.20,
@@ -43,36 +41,30 @@ export const customerData = [
   },
 ];
 
-// Generate a bigger dataset with meaningful numeric metrics
-for (let i = 1; i <= 100; i++) {
+for (let i = 1; i <= 500; i++) {
   const countries = ['USA', 'UK', 'Canada', 'France', 'Germany', 'Spain', 'Italy', 'Japan', 'China', 'Australia'];
   const regions = ['North', 'South', 'East', 'West', 'Central', null];
   const titles = ['Owner', 'Sales Manager', 'Marketing Director', 'CEO', 'CTO', 'Purchasing Representative'];
   
-  // Generate random dates in the past for customer acquisition
   const today = new Date();
-  const randomDaysAgo = Math.floor(Math.random() * 1095); // Up to 3 years ago
+  const randomDaysAgo = Math.floor(Math.random() * 1095);
   const randomStart = new Date(today);
   randomStart.setDate(today.getDate() - randomDaysAgo);
   
-  // Generate last order date (more recent than start date)
   const lastOrderDaysAgo = Math.floor(Math.random() * randomDaysAgo);
   const lastOrderDate = new Date(today);
   lastOrderDate.setDate(today.getDate() - lastOrderDaysAgo);
   
-  // More realistic order counts based on customer tenure
   const tenureInMonths = Math.floor(randomDaysAgo / 30);
-  const ordersPerMonth = Math.random() * 0.8 + 0.2; // 0.2 to 1 orders per month
+  const ordersPerMonth = Math.random() * 0.8 + 0.2;
   const totalOrders = Math.max(1, Math.floor(tenureInMonths * ordersPerMonth));
   
-  // Generate spend metrics that correlate
-  const averageOrderValue = Math.floor(Math.random() * 900) + 100; // $100 to $1000
+  const averageOrderValue = Math.floor(Math.random() * 900) + 100;
   const totalSpend = +(averageOrderValue * totalOrders).toFixed(2);
   
-  // Loyalty score calculation based on frequency and spend
-  const spendFactor = Math.min(1, totalSpend / 10000); // Max at $10k
-  const frequencyFactor = Math.min(1, totalOrders / 24); // Max at 24 orders
-  const recencyFactor = Math.min(1, 1 - (lastOrderDaysAgo / 365)); // Higher for recent orders
+  const spendFactor = Math.min(1, totalSpend / 10000);
+  const frequencyFactor = Math.min(1, totalOrders / 24);
+  const recencyFactor = Math.min(1, 1 - (lastOrderDaysAgo / 365));
   const loyaltyScore = Math.floor((spendFactor * 0.4 + frequencyFactor * 0.4 + recencyFactor * 0.2) * 100);
   
   customerData.push({
@@ -87,7 +79,6 @@ for (let i = 1; i <= 100; i++) {
     country: countries[Math.floor(Math.random() * countries.length)],
     phone: `(${Math.floor(100 + Math.random() * 900)}) ${Math.floor(100 + Math.random() * 900)}-${Math.floor(1000 + Math.random() * 9000)}`,
     fax: Math.random() > 0.3 ? `(${Math.floor(100 + Math.random() * 900)}) ${Math.floor(100 + Math.random() * 900)}-${Math.floor(1000 + Math.random() * 9000)}` : null,
-    // Added metrics
     totalOrders: totalOrders,
     totalSpend: totalSpend,
     averageOrderValue: +(totalSpend / totalOrders).toFixed(2),
@@ -98,7 +89,6 @@ for (let i = 1; i <= 100; i++) {
   });
 }
 
-// Define visualization metadata for the columns
 export const columnMetadata = {
   customerID: { type: 'id', visualizable: false, description: 'Unique customer identifier' },
   companyName: { type: 'category', visualizable: true, description: 'Customer company name', recommendedForAxis: true },
@@ -120,7 +110,6 @@ export const columnMetadata = {
   loyaltyScore: { type: 'numeric', visualizable: true, description: 'Customer loyalty score (0-100)', recommendedForValue: true }
 };
 
-// Define a set of predefined queries with visualization-friendly results
 export const predefinedQueries = [
   {
     name: 'All Customers',
@@ -137,7 +126,6 @@ export const predefinedQueries = [
     description: 'Group customers by country',
     query: 'SELECT country, COUNT(*) as customer_count, AVG(totalSpend) as avg_spend, AVG(loyaltyScore) as avg_loyalty FROM Customers GROUP BY country ORDER BY customer_count DESC',
     results: (() => {
-      // Group by country with aggregates
       const countryStats = {};
       customerData.forEach(customer => {
         if (!countryStats[customer.country]) {
@@ -305,7 +293,6 @@ export const predefinedQueries = [
   }
 ];
 
-// Utility function to get recommended visualization settings for a dataset
 export function getRecommendedVisualization(data) {
   if (!data || data.length === 0) {
     return {
@@ -316,13 +303,11 @@ export function getRecommendedVisualization(data) {
   
   const columns = Object.keys(data[0]);
   
-  // 1. Identify potential category columns (strings with low cardinality)
   const columnCounts = {};
   columns.forEach(col => {
     columnCounts[col] = new Set();
   });
   
-  // Count unique values in each column
   data.forEach(row => {
     columns.forEach(col => {
       if (row[col] !== null && row[col] !== undefined) {
@@ -331,7 +316,6 @@ export function getRecommendedVisualization(data) {
     });
   });
   
-  // Find columns with reasonably low cardinality (good for x-axis)
   const categoryCandidates = columns.filter(col => {
     const uniqueCount = columnCounts[col].size;
     const dataType = typeof data[0][col];
@@ -341,13 +325,11 @@ export function getRecommendedVisualization(data) {
     );
   });
   
-  // 2. Identify numeric columns (good for y-axis)
   const numericColumns = columns.filter(col => {
     return typeof data[0][col] === 'number' && 
            !['id', 'code', 'zip', 'year'].some(term => col.toLowerCase().includes(term));
   });
   
-  // 3. Make recommendations
   if (categoryCandidates.length === 0 || numericColumns.length === 0) {
     return {
       type: 'none',
@@ -355,7 +337,6 @@ export function getRecommendedVisualization(data) {
     };
   }
   
-  // Pick best category column (prioritize those with metadata recommendations)
   let bestCategoryColumn = categoryCandidates[0];
   for (const col of categoryCandidates) {
     if (columnMetadata[col]?.recommendedForAxis) {
@@ -364,22 +345,18 @@ export function getRecommendedVisualization(data) {
     }
   }
   
-  // Pick top numeric columns
   const topNumericColumns = numericColumns
     .filter(col => (columnMetadata[col]?.recommendedForValue) || true)
     .slice(0, 3);
   
-  // Choose chart type based on data characteristics
-  let chartType = 'bar'; // Default
+  let chartType = 'bar';
   
-  // Time series detection (columns with 'date', 'month', 'year', etc.)
   const timeSeriesPattern = /date|month|year|period|quarter|week|day|time/i;
   if (bestCategoryColumn.match(timeSeriesPattern) || 
       (data.length > 5 && categoryCandidates.length === 1 && numericColumns.length === 1)) {
     chartType = 'line';
   }
   
-  // Single numeric column with percentages or parts of a whole
   if (numericColumns.length === 1 && 
       (bestCategoryColumn.includes('type') || 
        bestCategoryColumn.includes('category'))) {

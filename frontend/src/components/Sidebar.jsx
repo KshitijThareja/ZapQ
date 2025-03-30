@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import styles from '../app/styles/Sidebar.module.css';
 import { useTheme } from '../app/context/ThemeContext';
+import { RiSidebarUnfoldFill, RiSidebarFoldFill } from "react-icons/ri";
 
 export default function Sidebar({ 
   predefinedQueries, 
@@ -31,7 +32,7 @@ export default function Sidebar({
         className={`${styles.collapsedSidebar} ${darkMode ? styles.dark : ''}`}
         onClick={() => setIsExpanded(true)}
       >
-        <span>≡</span>
+        <RiSidebarFoldFill className={styles.expandIcon} />
       </div>
     );
   }
@@ -44,7 +45,7 @@ export default function Sidebar({
           className={styles.collapseButton}
           onClick={() => setIsExpanded(false)}
         >
-          &lt;
+          <RiSidebarUnfoldFill className={styles.collapseIcon} />
         </button>
       </div>
       

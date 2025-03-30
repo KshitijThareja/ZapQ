@@ -19,6 +19,34 @@
     cursor: pointer;
     font-size: 1.5rem;
   }
+
+  .collapseIcon {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    transition: transform 0.2s;
+  }
+
+  .collapseIcon:hover {
+    transform: rotate(180deg);
+  }
+
+  .collapsedSidebar:hover {
+    background-color: var(--light-bg);
+  }
+
+  .expandIcon {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    transition: transform 0.2s;
+  }
+
+  .collapsedSidebar:hover .expandIcon {
+    transform: rotate(180deg);
+  }
+  
+  .collapsedSidebar:hover {
+    background-color: var(--light-bg);
+  }
   
   .sidebarHeader {
     display: flex;
