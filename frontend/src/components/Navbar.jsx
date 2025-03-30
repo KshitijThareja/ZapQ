@@ -5,7 +5,7 @@ import { useTheme } from '../app/context/ThemeContext';
 import { BiSolidZap } from "react-icons/bi";
 import { IoMdSunny, IoMdMoon } from "react-icons/io";
 
-export default function Navbar({ executionTime, pageLoadTime }) {
+export default function Navbar({ executionTime, performanceMetrics }) {
   const { darkMode, toggleTheme } = useTheme();
   
   return (
@@ -24,10 +24,10 @@ export default function Navbar({ executionTime, pageLoadTime }) {
           </div>
         )}
         
-        {pageLoadTime && (
+        {performanceMetrics && (
           <div className={styles.metric}>
             <span className={styles.metricLabel}>Page Load:</span>
-            <span className={styles.metricValue}>{pageLoadTime} ms</span>
+            <span className={styles.metricValue}>{performanceMetrics.pageLoadTime} ms</span>
           </div>
         )}
       </div>

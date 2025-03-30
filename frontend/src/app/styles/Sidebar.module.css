@@ -213,13 +213,11 @@
 
   .tabButton.active {
     border-bottom: 2px solid var(--primary-color);
-    border-bottom: 2px solid var(--dark-accent);
-    color: var(--primary-color);
   }
 
   .sidebar.dark .tabButton.active {
-    border-bottom: 2px solid var(--dark-accent);
-    color: var(--dark-accent);
+    border-bottom: 2px solid var(--primary-color);
+    color: var(--primary-color);
   }
   
   .sidebar.dark .tabButton:hover:not(.active) {

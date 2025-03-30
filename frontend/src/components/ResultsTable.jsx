@@ -10,8 +10,7 @@ export default function ResultsTable({ results, isLoading }) {
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [filters, setFilters] = useState({});
   const { darkMode } = useTheme();
-  
-  // If there are no results yet
+
   if (results.length === 0 && !isLoading) {
     return (
       <div className={`${styles.noResults} ${darkMode ? styles.dark : ''}`}>
@@ -19,8 +18,7 @@ export default function ResultsTable({ results, isLoading }) {
       </div>
     );
   }
-  
-  // If loading
+
   if (isLoading) {
     return (
       <div className={`${styles.loading} ${darkMode ? styles.dark : ''}`}>
@@ -29,17 +27,15 @@ export default function ResultsTable({ results, isLoading }) {
       </div>
     );
   }
-  
-  // Get the column headers from the first row
+
   const columns = Object.keys(results[0] || {});
-  
-  // Apply sorting
+
   const sortedResults = [...results].sort((a, b) => {
     if (!sortConfig.key) return 0;
-    
+
     const valueA = a[sortConfig.key];
     const valueB = b[sortConfig.key];
-    
+
     if (valueA < valueB) {
       return sortConfig.direction === 'ascending' ? -1 : 1;
     }
@@ -48,8 +44,7 @@ export default function ResultsTable({ results, isLoading }) {
     }
     return 0;
   });
-  
-  // Apply filtering
+
   const filteredResults = sortedResults.filter(row => {
     return Object.entries(filters).every(([column, filterValue]) => {
       if (!filterValue) return true;
@@ -57,14 +52,13 @@ export default function ResultsTable({ results, isLoading }) {
       return cellValue.includes(filterValue.toLowerCase());
     });
   });
-  
-  // Apply pagination
+
   const totalPages = Math.ceil(filteredResults.length / rowsPerPage);
   const paginatedResults = filteredResults.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
-  
+
   const requestSort = (key) => {
     let direction = 'ascending';
     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -72,45 +66,42 @@ export default function ResultsTable({ results, isLoading }) {
     }
     setSortConfig({ key, direction });
   };
-  
+
   const handleFilterChange = (column, value) => {
     setFilters(prev => ({
       ...prev,
       [column]: value
     }));
-    setCurrentPage(1); // Reset to first page when filtering
+    setCurrentPage(1);
   };
-  
+
   const exportToCsv = () => {
-    // Generate CSV content
     const headers = columns.join(',');
-    const rows = filteredResults.map(row => 
+    const rows = filteredResults.map(row =>
       columns.map(col => `"${row[col]}"`).join(',')
     ).join('\n');
-    
+
     const csvContent = `${headers}\n${rows}`;
-    
-    // Create download link
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
+
     const link = document.createElement('a');
-    
-    // Set link properties
     link.href = url;
     link.download = 'query_results.csv';
-    link.style.display = 'none';
-    
-    // Add to DOM and click
-    document.body.appendChild(link);
+
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    link.target = iframe.name;
     link.click();
-    
-    // Clean up
+
     setTimeout(() => {
-      document.body.removeChild(link);
       URL.revokeObjectURL(url);
+      document.body.removeChild(iframe);
     }, 100);
   };
-  
+
   return (
     <div className={`${styles.tableContainer} ${darkMode ? styles.dark : ''}`}>
       <div className={styles.tableHeader}>
@@ -118,9 +109,9 @@ export default function ResultsTable({ results, isLoading }) {
           Showing {paginatedResults.length} of {filteredResults.length} results
           {filteredResults.length !== results.length && ` (filtered from ${results.length} total)`}
         </div>
-        
+
         <div className={styles.tableActions}>
-          <select 
+          <select
             value={rowsPerPage}
             onChange={(e) => {
               setRowsPerPage(Number(e.target.value));
@@ -133,8 +124,8 @@ export default function ResultsTable({ results, isLoading }) {
             <option value={50}>50 rows</option>
             <option value={100}>100 rows</option>
           </select>
-          
-          <button 
+
+          <button
             className={styles.exportButton}
             onClick={exportToCsv}
           >
@@ -142,7 +133,7 @@ export default function ResultsTable({ results, isLoading }) {
           </button>
         </div>
       </div>
-      
+
       <div className={styles.tableWrapper}>
         <table className={styles.resultsTable}>
           <thead>
@@ -176,14 +167,18 @@ export default function ResultsTable({ results, isLoading }) {
             {paginatedResults.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {columns.map(column => (
-                  <td key={`${rowIndex}-${column}`}>{row[column]}</td>
+                  <td key={`${rowIndex}-${column}`}>
+                    {row[column] === null || row[column] === undefined
+                      ? ''
+                      : String(row[column])}
+                  </td>
                 ))}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      
+
       {totalPages > 1 && (
         <div className={styles.pagination}>
           <button
@@ -200,11 +195,11 @@ export default function ResultsTable({ results, isLoading }) {
           >
             &lt;
           </button>
-          
+
           <span className={styles.pageInfo}>
             Page {currentPage} of {totalPages}
           </span>
-          
+
           <button
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(prev => prev + 1)}

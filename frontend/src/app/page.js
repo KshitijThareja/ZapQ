@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import QueryEditor from '../components/QueryEditor';
 import ResultsTable from '../components/ResultsTable';
+import DataVisualization from '../components/DataVisualization';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
-import ThemeProvider from './context/ThemeContext';
 import { predefinedQueries } from '../data/predefinedQueries';
 import { processQuery } from './utils/queryProcessor';
-import { measurePerformance } from './utils/performance';
+import { measurePerformance, measureQueryExecution, collectPerformanceMetrics } from './utils/performance';
+import { useTheme } from '../app/context/ThemeContext';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -18,18 +19,24 @@ export default function Home() {
   const [executionTime, setExecutionTime] = useState(null);
   const [queryHistory, setQueryHistory] = useState([]);
   const [savedQueries, setSavedQueries] = useState([]);
-  const [layout, setLayout] = useState({ editorHeight: 30 }); 
-  const [pageLoadTime, setPageLoadTime] = useState(null);
+  const [layout, setLayout] = useState({
+    editorHeight: 30,
+    showVisualization: true
+  });
+  const [performanceMetrics, setPerformanceMetrics] = useState(null);
+  const [activeTab, setActiveTab] = useState('results');
 
   useEffect(() => {
-    // Measure initial page load time
     const loadTime = measurePerformance();
-    setPageLoadTime(loadTime);
-    
-    // Execute default query on load
+    const metrics = collectPerformanceMetrics();
+
+    setPerformanceMetrics({
+      pageLoadTime: loadTime,
+      ...metrics
+    });
+
     executeQuery(currentQuery);
-    
-    // Initialize saved queries from localStorage if available
+
     const saved = localStorage.getItem('savedQueries');
     if (saved) {
       setSavedQueries(JSON.parse(saved));
@@ -38,31 +45,27 @@ export default function Home() {
 
   const executeQuery = async (query) => {
     setIsLoading(true);
-    
-    // Start timing
-    const startTime = performance.now();
-    
+
     try {
-      // Simulate network delay for realism
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Process the query (this is mocked, as per requirements)
-      const results = processQuery(query);
-      
-      // Calculate execution time
-      const endTime = performance.now();
-      const timeTaken = (endTime - startTime).toFixed(2);
-      
+      const { result, executionTime } = measureQueryExecution(() => {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            const results = processQuery(query);
+            resolve(results);
+          }, 0);
+        });
+      });
+
+      const results = await result;
+
       setQueryResults(results);
-      setExecutionTime(timeTaken);
-      
-      // Add to history if not a duplicate
+      setExecutionTime(executionTime);
+
       if (!queryHistory.includes(query)) {
-        setQueryHistory(prev => [query, ...prev.slice(0, 9)]); // Keep last 10 queries
+        setQueryHistory(prev => [query, ...prev.slice(0, 9)]);
       }
     } catch (error) {
       console.error("Error executing query:", error);
-      // In a real app, we would handle errors more gracefully
     } finally {
       setIsLoading(false);
     }
@@ -85,70 +88,104 @@ export default function Home() {
   };
 
   const handleLayoutChange = (editorHeight) => {
-    setLayout({ editorHeight });
+    setLayout(prev => ({ ...prev, editorHeight }));
   };
 
+  const toggleVisualization = () => {
+    setLayout(prev => ({ ...prev, showVisualization: !prev.showVisualization }));
+  };
+
+  const { darkMode } = useTheme();
+
   return (
-    <ThemeProvider>
-      <div className={styles.container}>
-        <Navbar 
-          executionTime={executionTime} 
-          pageLoadTime={pageLoadTime}
+    <div className={`${styles.container} ${darkMode ? styles.dark : ''}`}>
+      <Navbar
+        executionTime={executionTime}
+        performanceMetrics={performanceMetrics}
+      />
+
+      <div className={styles.mainContent}>
+        <Sidebar
+          predefinedQueries={predefinedQueries}
+          queryHistory={queryHistory}
+          savedQueries={savedQueries}
+          onQuerySelect={handlePredefinedQuerySelect}
+          onSaveQuery={saveQuery}
         />
-        
-        <div className={styles.mainContent}>
-          <Sidebar 
-            predefinedQueries={predefinedQueries}
-            queryHistory={queryHistory}
-            savedQueries={savedQueries}
-            onQuerySelect={handlePredefinedQuerySelect}
-            onSaveQuery={saveQuery}
-          />
-          
-          <div className={styles.queryContainer}>
-            <div 
-              className={styles.queryEditor} 
-              style={{ height: `${layout.editorHeight}vh` }}
-            >
-              <QueryEditor 
-                query={currentQuery}
-                onQueryChange={handleQueryChange}
-                onExecuteQuery={() => executeQuery(currentQuery)}
-                isExecuting={isLoading}
-              />
-              <div className={styles.resizeHandle} 
-                onMouseDown={(e) => {
-                  const startY = e.clientY;
-                  const startHeight = layout.editorHeight;
-                  
-                  const handleMouseMove = (moveEvent) => {
-                    const deltaY = moveEvent.clientY - startY;
-                    const newHeight = startHeight + (deltaY * 0.1);
-                    if (newHeight > 10 && newHeight < 70) {
-                      handleLayoutChange(newHeight);
-                    }
-                  };
-                  
-                  const handleMouseUp = () => {
-                    document.removeEventListener('mousemove', handleMouseMove);
-                    document.removeEventListener('mouseup', handleMouseUp);
-                  };
-                  
-                  document.addEventListener('mousemove', handleMouseMove);
-                  document.addEventListener('mouseup', handleMouseUp);
-                }}
-              />
+
+        <div className={styles.queryContainer}>
+          <div
+            className={styles.queryEditor}
+            style={{ height: `${layout.editorHeight}vh` }}
+          >
+            <QueryEditor
+              query={currentQuery}
+              onQueryChange={handleQueryChange}
+              onExecuteQuery={() => executeQuery(currentQuery)}
+              isExecuting={isLoading}
+            />
+            <div className={styles.resizeHandle}
+              onMouseDown={(e) => {
+                const startY = e.clientY;
+                const startHeight = layout.editorHeight;
+
+                const handleMouseMove = (moveEvent) => {
+                  const deltaY = moveEvent.clientY - startY;
+                  const newHeight = startHeight + (deltaY * 0.1);
+                  if (newHeight > 10 && newHeight < 70) {
+                    handleLayoutChange(newHeight);
+                  }
+                };
+
+                const handleMouseUp = () => {
+                  document.removeEventListener('mousemove', handleMouseMove);
+                  document.removeEventListener('mouseup', handleMouseUp);
+                };
+
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+              }}
+            />
+          </div>
+
+          <div className={styles.resultsContainer}>
+            <div className={`${styles.resultsTabs} ${darkMode ? styles.dark : ''}`}>
+              <button
+                className={`${styles.tabButton} ${darkMode ? styles.dark : ''}`}
+                onClick={() => setActiveTab('results')}
+              >
+                Results Table
+              </button>
+              <button
+                className={`${styles.tabButton} ${darkMode ? styles.dark : ''}`}
+                onClick={() => setActiveTab('visualization')}
+              >
+                Visualization
+              </button>
             </div>
-            
-            <div className={styles.resultsContainer}>
-              <ResultsTable 
-                results={queryResults} 
-                isLoading={isLoading}
-              />
+
+            <div className={styles.tabContent}>
+              {activeTab === 'results' && (
+                <div className={styles.resultsWrapper}>
+                  <ResultsTable
+                    results={queryResults}
+                    isLoading={isLoading}
+                  />
+                </div>
+              )}
+
+              {activeTab === 'visualization' && (
+                <div className={styles.visualizationWrapper}>
+                  <DataVisualization
+                    data={queryResults}
+                    isLoading={isLoading}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-    </ThemeProvider>
+    </div>
   );
 }
