@@ -1,0 +1,73 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border-bottom: 1px solid var(--light-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --icon-color: black;
+  
+}
+
+.navbar.dark {
+  background-color: var(--dark-surface);
+  border-bottom: 1px solid var(--dark-border);
+  color: var(--text-light);
+  --icon-color: var(--text-light);
+}
+
+.navbar.dark .metricLabel {
+  color: var(--text-muted);
+}
+
+/* Logo Alignment */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.metricSection {
+  display: flex;
+  gap: 1rem;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.metricLabel {
+  font-size: 0.875rem;
+  color: var(--secondary-color);
+}
+
+.metricValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.themeToggle {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon-color);
+}

@@ -1,0 +1,259 @@
+.sidebar {
+    width: 280px;
+    height: 100%;
+    background-color: white;
+    border-right: 1px solid var(--light-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .collapsedSidebar {
+    width: 30px;
+    height: 100%;
+    background-color: white;
+    border-right: 1px solid var(--light-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+  
+  .sidebarHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--light-border);
+  }
+  
+  .sidebarHeader h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .collapseButton {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    color: var(--secondary-color);
+  }
+  
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--light-border);
+  }
+  
+  .tabButton {
+    flex: 1;
+    padding: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dark);
+  }
+  
+  .tabButton.active {
+    border-bottom: 2px solid var(--primary-color);
+    font-weight: 600;
+  }
+  
+  .tabButton:hover:not(.active) {
+    background-color: var(--light-bg);
+  }
+  
+  .tabContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+  
+  .predefinedQueries, .queryHistory, .savedQueries {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .queryItem, .historyItem, .savedItem {
+    padding: 0.75rem;
+    border: 1px solid var(--light-border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .queryItem:hover, .historyItem:hover, .savedItem:hover {
+    background-color: var(--light-bg);
+  }
+  
+  .queryItem h3, .savedItem h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+  }
+  
+  .queryItem p, .historyItem p, .savedItem p {
+    font-size: 0.8125rem;
+    margin: 0;
+    color: var(--secondary-color);
+  }
+  
+  .saveActions {
+    margin-bottom: 1rem;
+  }
+  
+  .saveForm {
+    border: 1px solid var(--light-border);
+    border-radius: 4px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .saveInput {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--light-border);
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .saveFormButtons {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .saveButton {
+    flex: 1;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    transition: background-color 0.2s;
+  }
+  
+  .saveButton:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  .cancelButton {
+    flex: 1;
+    background-color: transparent;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+  
+  .cancelButton:hover {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+  
+  .newSaveButton {
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+  
+  .newSaveButton:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .emptyMessage {
+    text-align: center;
+    color: var(--secondary-color);
+    font-style: italic;
+    padding: 1rem 0;
+  }
+
+   .sidebar.dark {
+    background-color: var(--dark-surface);
+    border-right: 1px solid var(--dark-border);
+    color: var(--text-light);
+  }
+  
+  .collapsedSidebar.dark {
+    background-color: var(--dark-surface);
+    border-right: 1px solid var(--dark-border);
+    color: var(--text-light);
+  }
+  
+  .sidebar.dark .sidebarHeader {
+    border-bottom: 1px solid var(--dark-border);
+  }
+  
+  .sidebar.dark .collapseButton {
+    color: var(--text-muted);
+  }
+  
+  .sidebar.dark .tabs {
+    border-bottom: 1px solid var(--dark-border);
+  }
+  
+  .sidebar.dark .tabButton {
+    color: var(--text-light);
+  }
+
+  .tabButton.active {
+    border-bottom: 2px solid var(--primary-color);
+    border-bottom: 2px solid var(--dark-accent);
+    color: var(--primary-color);
+  }
+
+  .sidebar.dark .tabButton.active {
+    border-bottom: 2px solid var(--dark-accent);
+    color: var(--dark-accent);
+  }
+  
+  .sidebar.dark .tabButton:hover:not(.active) {
+    background-color: var(--dark-elevated);
+  }
+  
+  .sidebar.dark .queryItem,
+  .sidebar.dark .historyItem,
+  .sidebar.dark .savedItem {
+    border-color: var(--dark-border);
+  }
+  
+  .sidebar.dark .queryItem:hover,
+  .sidebar.dark .historyItem:hover,
+  .sidebar.dark .savedItem:hover {
+    background-color: var(--dark-elevated);
+  }
+  
+  .sidebar.dark .queryItem p,
+  .sidebar.dark .historyItem p,
+  .sidebar.dark .savedItem p {
+    color: var(--text-muted);
+  }
+  
+  .sidebar.dark .saveForm {
+    border-color: var(--dark-border);
+  }
+  
+  .sidebar.dark .saveInput {
+    background-color: var(--dark-elevated);
+    border-color: var(--dark-border);
+    color: var(--text-light);
+  }
+  
+  .sidebar.dark .emptyMessage {
+    color: var(--text-muted);
+  }

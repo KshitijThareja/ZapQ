@@ -1,0 +1,122 @@
+.editorContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: white;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid var(--light-border);
+  }
+  
+  .title {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  
+  .toolbarButtons {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .executeButton {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .executeButton:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+  }
+  
+  .executeButton:disabled {
+    background-color: var(--secondary-color);
+    cursor: not-allowed;
+  }
+  
+  .clearButton {
+    background-color: transparent;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .clearButton:hover {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+  
+  .queryTextarea {
+    flex: 1;
+    width: 100%;
+    padding: 0.75rem;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    border: none;
+    resize: none;
+    outline: none;
+    background-color: white;
+  }
+
+  .statusBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    background-color: #f5f5f5;
+    border-top: 1px solid var(--light-border);
+    font-size: 0.75rem;
+    color: var(--secondary-color);
+  }
+  
+  
+  .keyboardHint {
+    font-style: italic;
+  }
+  
+  .keyword {
+    color: #0066cc;
+    font-weight: bold;
+  }
+
+  .editorContainer.dark {
+    background-color: var(--dark-surface);
+    color: var(--text-light);
+  }
+  
+  .editorContainer.dark .toolbar {
+    background-color: var(--dark-elevated);
+    border-bottom: 1px solid var(--dark-border);
+  }
+  
+  .editorContainer.dark .queryTextarea {
+    background-color: var(--dark-surface);
+    color: var(--text-light);
+  }
+  
+  .editorContainer.dark .statusBar {
+    background-color: var(--dark-elevated);
+    border-top: 1px solid var(--dark-border);
+    color: var(--text-muted);
+  }
+  
+  .editorContainer.dark .keyword {
+    color: var(--dark-accent);
+  }
