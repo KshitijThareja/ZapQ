@@ -21,7 +21,6 @@
     <a href="#performance">Performance</a> •
     <a href="#optimizations">Optimizations</a> •
     <a href="#installation">Installation</a> •
-    <a href="#contributing">Contributing</a>
   </p>
 </div>
 
